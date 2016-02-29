@@ -46,7 +46,9 @@ function crxToZip(buf) {
 }
 
 function unzip(crxFilePath, destination) {
-    return readFile(crxFilePath)
+    const filePath = path.resolve(crxFilePath);
+
+    return readFile(filePath)
         .then((buf) => {
             const zipBuf = crxToZip(buf);
             const zip = new JSZip(zipBuf);
