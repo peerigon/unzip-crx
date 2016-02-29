@@ -1,0 +1,40 @@
+{
+  "name": "unzip-crx",
+  "version": "0.0.1",
+  "description": "Unzip chrome extension files",
+  "main": "./dist/index.js",
+  "scripts": {
+    "prebuild": "rm -rf dist && mkdir dist",
+    "build": "babel src --out-dir dist",
+    "prepublish": "npm run build",
+    "test": "mocha -R spec --recursive --compilers js:babel-core/register",
+    "coverage": "babel-node ./node_modules/istanbul/lib/cli.js cover _mocha -- -R spec --recursive --compilers js:babel-core/register",
+    "test-watch": "mocha --recursive --watch --compilers js:babel-core/register"
+  },
+  "keywords": [
+    "unzip",
+    "crx",
+    "chrome",
+    "extensions",
+    "zip"
+  ],
+  "author": "Peerigon developers <developers@peerigon.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.5.1",
+    "babel-core": "^6.5.2",
+    "babel-preset-es2015": "^6.5.0",
+    "eslint": "^2.2.0",
+    "eslint-config-peerigon": "^3.1.1",
+    "istanbul": "^0.4.2",
+    "mocha": "^2.4.5",
+    "mock-fs": "^3.7.0",
+    "temp": "^0.8.3",
+    "unexpected": "^10.9.1"
+  },
+  "dependencies": {
+    "jszip": "^2.5.0",
+    "mkdirp": "^0.5.1",
+    "yaku": "^0.13.3"
+  }
+}
