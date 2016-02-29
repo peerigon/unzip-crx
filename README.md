@@ -20,7 +20,7 @@ $ npm install unzip-crx
 const unzip = require("unzip-crx");
 
 const crxFile = "./this-chrome-extension.crx";
-``
+
 unzip(crxFile).then(() => {
   console.log("Successfully unzipped your crx file..");
 });
