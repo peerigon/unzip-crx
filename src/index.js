@@ -47,7 +47,11 @@ function crxToZip(buf) {
 
 function unzip(crxFilePath, destination) {
     const filePath = path.resolve(crxFilePath);
+    const extname = path.extname(crxFilePath);
+    const basename = path.basename(crxFilePath, extname);
+    const dirname = path.dirname(crxFilePath);
 
+    destination = destination || path.resolve(dirname, basename);
     return readFile(filePath)
         .then((buf) => {
             const zipBuf = crxToZip(buf);
