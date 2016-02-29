@@ -6,10 +6,12 @@
   "scripts": {
     "prebuild": "rm -rf dist && mkdir dist",
     "build": "babel src --out-dir dist",
+    "lint": "eslint ./src",
     "prepublish": "npm run build",
     "test": "mocha -R spec --recursive --compilers js:babel-core/register",
-    "coverage": "babel-node ./node_modules/istanbul/lib/cli.js cover _mocha -- -R spec --recursive --compilers js:babel-core/register",
-    "test-watch": "mocha --recursive --watch --compilers js:babel-core/register"
+    "test-watch": "mocha --recursive --watch --compilers js:babel-core/register",
+    "posttest": "npm run lint",
+    "coverage": "babel-node ./node_modules/istanbul/lib/cli.js cover _mocha -- -R spec --recursive --compilers js:babel-core/register"
   },
   "keywords": [
     "unzip",
