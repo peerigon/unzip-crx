@@ -8,6 +8,7 @@ const promisify = require("yaku/lib/promisify");
 
 const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
+const mkdir = promisify(mkdirp);
 
 function crxToZip(buf) {
     function calcLength(a, b, c, d) {
@@ -59,27 +60,12 @@ function unzip(crxFilePath, destination) {
             const zipFileKeys = Object.keys(zip.files);
 
             return Promise.all(zipFileKeys.map((filename) => {
-                return new Promise((resolve, reject) => {
-                    const isFile = !zip.files[filename].dir;
-                    const fullPath = path.join(destination, filename);
-                    const directory = isFile && path.dirname(fullPath) || fullPath;
-                    const content = zip.files[filename].asNodeBuffer();
+                const isFile = !zip.files[filename].dir;
+                const fullPath = path.join(destination, filename);
+                const directory = isFile && path.dirname(fullPath) || fullPath;
+                const content = zip.files[filename].asNodeBuffer();
 
-                    mkdirp(directory, (err) => {
-                        if (err) {
-                            reject(err);
-                            return;
-                        }
-
-                        if (isFile) {
-                            resolve(writeFile(fullPath, content));
-                            return;
-                        }
-
-                        resolve(true);
-                        return;
-                    });
-                });
+                return mkdir(directory).then(() => isFile ? writeFile(fullPath, content) : true);
             }));
         });
 }
