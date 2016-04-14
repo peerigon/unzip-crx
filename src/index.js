@@ -2,7 +2,7 @@
 
 const fs = require("fs");
 const path = require("path");
-const JSZip = require("jszip");
+const jszip = require("jszip");
 const mkdirp = require("mkdirp");
 const promisify = require("yaku/lib/promisify");
 
@@ -54,18 +54,19 @@ function unzip(crxFilePath, destination) {
 
     destination = destination || path.resolve(dirname, basename);
     return readFile(filePath)
-        .then((buf) => {
-            const zipBuf = crxToZip(buf);
-            const zip = new JSZip(zipBuf);
+        .then((buf) => jszip.loadAsync(crxToZip(buf)))
+        .then((zip) => {
             const zipFileKeys = Object.keys(zip.files);
 
             return Promise.all(zipFileKeys.map((filename) => {
                 const isFile = !zip.files[filename].dir;
                 const fullPath = path.join(destination, filename);
                 const directory = isFile && path.dirname(fullPath) || fullPath;
-                const content = zip.files[filename].asNodeBuffer();
+                const content = zip.files[filename].async("string");
 
-                return mkdir(directory).then(() => isFile ? writeFile(fullPath, content) : true);
+                return mkdir(directory)
+                    .then(() => isFile ? content : false)
+                    .then((data) => data ? writeFile(fullPath, data) : true);
             }));
         });
 }
