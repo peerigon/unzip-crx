@@ -1,6 +1,6 @@
 {
   "name": "unzip-crx",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Unzip chrome extension files",
   "main": "./dist/index.js",
   "scripts": {
