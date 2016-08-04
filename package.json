@@ -11,7 +11,7 @@
     "test": "mocha -R spec --recursive --compilers js:babel-core/register",
     "test-watch": "mocha --recursive --watch --compilers js:babel-core/register",
     "posttest": "npm run lint",
-    "coverage": "babel-node ./node_modules/istanbul/lib/cli.js cover _mocha -- -R spec --recursive --compilers js:babel-core/register"
+    "coverage": "nyc npm test && nyc report --reporter=text-lcov | coveralls"
   },
   "keywords": [
     "unzip",
@@ -30,11 +30,12 @@
     "babel-cli": "^6.11.4",
     "babel-core": "^6.11.4",
     "babel-preset-es2015": "^6.9.0",
+    "coveralls": "^2.11.12",
     "eslint": "^2.7.0",
     "eslint-config-peerigon": "^3.1.1",
-    "istanbul": "^0.4.3",
     "mocha": "^3.0.1",
     "mock-fs": "^3.11.0",
+    "nyc": "^7.1.0",
     "temp": "^0.8.3",
     "unexpected": "^10.15.0"
   },
