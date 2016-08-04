@@ -42,7 +42,7 @@ From opening a bug report to creating a pull request: **every contribution is ap
 All pull requests should have 100% test coverage (with notable exceptions) and need to pass all tests.
 
 - Call `npm test` to run the unit tests
-- Call `npm run coverage` to check the test coverage (using [istanbul](https://github.com/gotwarlost/istanbul))
+- Call `npm run coverage` to check the test coverage (using [istanbuljs/nyc](https://github.com/istanbuljs/nyc))
 
 ## LICENSE
 
