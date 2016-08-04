@@ -62,7 +62,7 @@ function unzip(crxFilePath, destination) {
                 const isFile = !zip.files[filename].dir;
                 const fullPath = path.join(destination, filename);
                 const directory = isFile && path.dirname(fullPath) || fullPath;
-                const content = zip.files[filename].async("string");
+                const content = zip.files[filename].async("nodebuffer");
 
                 return mkdir(directory)
                     .then(() => isFile ? content : false)

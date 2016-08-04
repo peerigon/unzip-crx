@@ -33,14 +33,21 @@ describe("unzip-crx", () => {
     });
 
     it("should unpack the given regular zip file", (done) => {
+        const expectBinary = fs.readFileSync(
+            path.join(__dirname, "./fixtures/extension/test.bin")
+        );
+
         const unzipPath = path.resolve(tempDir, "ext");
         const readmeFile = path.resolve(tempDir, "ext/README.md");
+        const binaryFile = path.resolve(tempDir, "ext/test.bin");
 
         unzip("./test/fixtures/extension-zipped.crx", unzipPath)
             .then(() => {
                 const file = fs.readFileSync(readmeFile, "utf8");
+                const binaryContent = fs.readFileSync(binaryFile);
 
                 expect(file, "to equal", "# Crazy Readme File");
+                expect(binaryContent, "to equal", expectBinary);
                 done();
             })
             .catch((err) => done(err));
