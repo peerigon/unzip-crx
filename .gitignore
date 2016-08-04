@@ -77,3 +77,4 @@ crashlytics.properties
 crashlytics-build.properties
 
 dist
+.nyc_output
