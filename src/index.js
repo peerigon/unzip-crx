@@ -33,15 +33,27 @@ function crxToZip(buf) {
     }
 
     // 02 00 00 00
-    if (buf[4] !== 2 || buf[5] || buf[6] || buf[7]) {
+    // or
+    // 03 00 00 00
+    const isV3 = buf[4] === 3;
+    const isV2 = buf[4] === 2;
+
+    if ((!isV2 && !isV3) || buf[5] || buf[6] || buf[7]) {
         throw new Error("Unexpected crx format version number.");
     }
 
-    const publicKeyLength = calcLength(buf[8], buf[9], buf[10], buf[11]);
-    const signatureLength = calcLength(buf[12], buf[13], buf[14], buf[15]);
+    if (isV2) {
+        const publicKeyLength = calcLength(buf[8], buf[9], buf[10], buf[11]);
+        const signatureLength = calcLength(buf[12], buf[13], buf[14], buf[15]);
 
-    // 16 = Magic number (4), CRX format version (4), lengths (2x4)
-    const zipStartOffset = 16 + publicKeyLength + signatureLength;
+        // 16 = Magic number (4), CRX format version (4), lengths (2x4)
+        const zipStartOffset = 16 + publicKeyLength + signatureLength;
+
+        return buf.slice(zipStartOffset, buf.length);
+    }
+    // v3 format has header size and then header
+    const headerSize = calcLength(buf[8], buf[9], buf[10], buf[11]);
+    const zipStartOffset = 12 + headerSize;
 
     return buf.slice(zipStartOffset, buf.length);
 }
