@@ -6,7 +6,7 @@ __Unzip chrome extension files__
 
 If you want to unzip [Chrome extension files](https://developer.chrome.com/extensions) (*.crx) you might have the problem that your unzip lib claims that the file header is malformed. This is due to that Chrome [adds some extra information](https://developer.chrome.com/extensions/crx) for identifying crx files. `unzip-crx` handles those additional headers and unzips as usual.
 
-This lib is highly inspired by [crx2ff](https://github.com/abarreir/crx2ff) from [abarreir](https://github.com/abarreir), thanks!
+This lib is highly inspired by [crx2ff](https://github.com/abarreir/crx2ff) from [abarreir](https://github.com/abarreir) and [crxviewer](https://github.com/Rob--W/crxviewer) from [Rob Wu](https://github.com/Rob--W), thanks!
 
 ## Installation
 
