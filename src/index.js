@@ -10,14 +10,16 @@ const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
 const mkdir = promisify(mkdirp);
 
+// Credits for the original function go to Rob--W
+// https://github.com/Rob--W/crxviewer/blob/master/src/lib/crx-to-zip.js
 function crxToZip(buf) {
     function calcLength(a, b, c, d) {
         let length = 0;
 
-        length += a;
+        length += a << 0;
         length += b << 8;
         length += c << 16;
-        length += d << 24;
+        length += d << 24 >>> 0;
         return length;
     }
 
