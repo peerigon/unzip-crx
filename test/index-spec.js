@@ -18,11 +18,25 @@ describe("unzip-crx", () => {
         tempDir = temp.mkdirSync("unzip-crx-test-files");
     });
 
-    it("should unpack the given crx file", (done) => {
+    it("should unpack the given crx v2 file", (done) => {
         const unzipPath = path.resolve(tempDir, "ext");
         const readmeFile = path.resolve(tempDir, "ext/README.md");
 
-        unzip("./test/fixtures/extension.crx", unzipPath)
+        unzip("./test/fixtures/extension-v2.crx", unzipPath)
+            .then(() => {
+                const file = fs.readFileSync(readmeFile, "utf8");
+
+                expect(file, "to equal", "# Crazy Readme File");
+                done();
+            })
+            .catch((err) => done(err));
+    });
+
+    it("should unpack the given crx v3 file", (done) => {
+        const unzipPath = path.resolve(tempDir, "ext");
+        const readmeFile = path.resolve(tempDir, "ext/README.md");
+
+        unzip("./test/fixtures/extension-v3.crx", unzipPath)
             .then(() => {
                 const file = fs.readFileSync(readmeFile, "utf8");
 
@@ -80,7 +94,7 @@ describe("unzip-crx", () => {
             fs.chmodSync(unzipPath, "644");
 
             return expect(
-                unzip("./test/fixtures/extension.crx", unzipPath),
+                unzip("./test/fixtures/extension-v2.crx", unzipPath),
                 "to be rejected with",
                 /EACCES: permission denied/
             );
