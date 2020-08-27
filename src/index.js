@@ -12,52 +12,61 @@ const mkdir = promisify(mkdirp);
 
 // Credits for the original function go to Rob--W
 // https://github.com/Rob--W/crxviewer/blob/master/src/lib/crx-to-zip.js
-function crxToZip(buf) {
+function crxToZip(arraybuffer) {
     function calcLength(a, b, c, d) {
         let length = 0;
 
         length += a << 0;
         length += b << 8;
         length += c << 16;
-        length += d << 24 >>> 0;
+        length += (d << 24) >>> 0;
         return length;
     }
+    // Definition of crx format: http://developer.chrome.com/extensions/crx.html
+    const view = new Uint8Array(arraybuffer);
 
     // 50 4b 03 04
-    // This is actually a zip file
-    if (buf[0] === 80 && buf[1] === 75 && buf[2] === 3 && buf[3] === 4) {
-        return buf;
+    if (view[0] === 80 && view[1] === 75 && view[2] === 3 && view[3] === 4) {
+        console.warn("Input is not a CRX file, but a ZIP file.");
+        const buffer = Buffer.from(arraybuffer);
+
+        return Uint8Array.from(buffer).buffer;
     }
 
-    // 43 72 32 34 (Cr24)
-    if (buf[0] !== 67 || buf[1] !== 114 || buf[2] !== 50 || buf[3] !== 52) {
-        throw new Error("Invalid header: Does not start with Cr24");
+    // 43 72 32 34
+    if (view[0] !== 67 || view[1] !== 114 || view[2] !== 50 || view[3] !== 52) {
+        throw new Error(
+    "Invalid header: Does not start with PK\\x03\\x04 or Cr24\n\n"
+    );
     }
 
     // 02 00 00 00
-    // or
-    // 03 00 00 00
-    const isV3 = buf[4] === 3;
-    const isV2 = buf[4] === 2;
-
-    if ((!isV2 && !isV3) || buf[5] || buf[6] || buf[7]) {
+    // 03 00 00 00 CRX3
+    if ((view[4] !== 2 && view[4] !== 3) || view[5] || view[6] || view[7]) {
         throw new Error("Unexpected crx format version number.");
     }
 
-    if (isV2) {
-        const publicKeyLength = calcLength(buf[8], buf[9], buf[10], buf[11]);
-        const signatureLength = calcLength(buf[12], buf[13], buf[14], buf[15]);
+    let zipStartOffset;
+
+    if (view[4] === 2) {
+        const publicKeyLength = calcLength(view[8], view[9], view[10], view[11]);
+        const signatureLength = calcLength(view[12], view[13], view[14], view[15]);
 
         // 16 = Magic number (4), CRX format version (4), lengths (2x4)
-        const zipStartOffset = 16 + publicKeyLength + signatureLength;
+        zipStartOffset = 16 + publicKeyLength + signatureLength;
+    } else {
+        // view[4] === 3
+        // CRX3 - https://cs.chromium.org/chromium/src/components/crx_file/crx3.proto
+        const crx3HeaderLength = calcLength(view[8], view[9], view[10], view[11]);
 
-        return buf.slice(zipStartOffset, buf.length);
+        // 12 = Magic number (4), CRX format version (4), header length (4)
+        zipStartOffset = 12 + crx3HeaderLength;
     }
-    // v3 format has header size and then header
-    const headerSize = calcLength(buf[8], buf[9], buf[10], buf[11]);
-    const zipStartOffset = 12 + headerSize;
 
-    return buf.slice(zipStartOffset, buf.length);
+    // Create a new view for the existing buffer, and wrap it in a Blob object.
+    const buffer = Buffer.from(new Uint8Array(arraybuffer, zipStartOffset));
+
+    return Uint8Array.from(buffer).buffer;
 }
 
 function unzip(crxFilePath, destination) {
@@ -68,21 +77,21 @@ function unzip(crxFilePath, destination) {
 
     destination = destination || path.resolve(dirname, basename);
     return readFile(filePath)
-        .then((buf) => jszip.loadAsync(crxToZip(buf)))
-        .then((zip) => {
-            const zipFileKeys = Object.keys(zip.files);
+    .then((buf) => jszip.loadAsync(crxToZip(buf)))
+    .then((zip) => {
+        const zipFileKeys = Object.keys(zip.files);
 
-            return Promise.all(zipFileKeys.map((filename) => {
-                const isFile = !zip.files[filename].dir;
-                const fullPath = path.join(destination, filename);
-                const directory = isFile && path.dirname(fullPath) || fullPath;
-                const content = zip.files[filename].async("nodebuffer");
+        return Promise.all(zipFileKeys.map((filename) => {
+            const isFile = !zip.files[filename].dir;
+            const fullPath = path.join(destination, filename);
+            const directory = isFile && path.dirname(fullPath) || fullPath;
+            const content = zip.files[filename].async("nodebuffer");
 
-                return mkdir(directory)
-                    .then(() => isFile ? content : false)
-                    .then((data) => data ? writeFile(fullPath, data) : true);
-            }));
-        });
+            return mkdir(directory)
+                .then(() => isFile ? content : false)
+                .then((data) => data ? writeFile(fullPath, data) : true);
+        }));
+    });
 }
 
 module.exports = unzip;
