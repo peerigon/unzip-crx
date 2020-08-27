@@ -1,10 +1,10 @@
 # unzip-crx
 
-__Unzip chrome extension files__
+**Unzip chrome extension files**
 
 [![Build Status](https://travis-ci.org/peerigon/unzip-crx.svg?branch=master)](https://travis-ci.org/peerigon/unzip-crx) [![Dependency Status](https://david-dm.org/peerigon/unzip-crx.svg)](https://david-dm.org/peerigon/unzip-crx) [![Coverage Status](https://coveralls.io/repos/github/peerigon/unzip-crx/badge.svg?branch=master)](https://coveralls.io/github/peerigon/unzip-crx?branch=master)
 
-If you want to unzip [Chrome extension files](https://developer.chrome.com/extensions) (*.crx) you might have the problem that your unzip lib claims that the file header is malformed. This is due to that Chrome [adds some extra information](https://developer.chrome.com/extensions/crx) for identifying crx files. `unzip-crx` handles those additional headers and unzips as usual.
+If you want to unzip [Chrome extension files](https://developer.chrome.com/extensions) (\*.crx) you might have the problem that your unzip lib claims that the file header is malformed. This is due to that Chrome [adds some extra information](https://developer.chrome.com/extensions/crx) for identifying crx files. `unzip-crx` handles those additional headers and unzips as usual.
 
 This lib is highly inspired by [crx2ff](https://github.com/abarreir/crx2ff) from [abarreir](https://github.com/abarreir) and [crxviewer](https://github.com/Rob--W/crxviewer) from [Rob Wu](https://github.com/Rob--W), thanks!
 
@@ -24,7 +24,6 @@ const crxFile = "./this-chrome-extension.crx";
 unzip(crxFile).then(() => {
   console.log("Successfully unzipped your crx file..");
 });
-
 ```
 
 ## API
@@ -32,8 +31,6 @@ unzip(crxFile).then(() => {
 ### unzip(file[, destination])
 
 Resolves with a Promise if the file was unzipped successfully, throws otherwise (use `.catch()`).
-
-
 
 ## Contributing
 
@@ -47,3 +44,7 @@ All pull requests should have 100% test coverage (with notable exceptions) and n
 ## LICENSE
 
 MIT
+
+## Sponsors
+
+[<img src="https://assets.peerigon.com/peerigon/logo/peerigon-logo-flat-spinat.png" width="150" />](https://peerigon.com)
