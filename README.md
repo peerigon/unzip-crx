@@ -11,7 +11,7 @@ This lib is highly inspired by [crx2ff](https://github.com/abarreir/crx2ff) from
 ## Installation
 
 ```
-$ npm install unzip-crx
+$ npm install unzip-crx-3
 ```
 
 ## Example
