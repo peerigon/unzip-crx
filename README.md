@@ -11,13 +11,13 @@ This lib is highly inspired by [crx2ff](https://github.com/abarreir/crx2ff) from
 ## Installation
 
 ```
-$ npm install unzip-crx
+$ npm install unzip-crx-3
 ```
 
 ## Example
 
 ```js
-const unzip = require("unzip-crx");
+const unzip = require("unzip-crx-3");
 
 const crxFile = "./this-chrome-extension.crx";
 
